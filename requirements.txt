@@ -1,0 +1,27 @@
+# FastMCP and MCP dependencies
+mcp>=1.0.0
+
+# HTTP client for API requests
+httpx>=0.25.0
+
+# Environment variable loading
+python-dotenv>=1.0.0
+
+# Flask web framework and extensions
+Flask>=2.3.0
+Flask-SQLAlchemy>=3.0.0
+Flask-Migrate>=4.0.0
+
+# Serialization and validation
+marshmallow>=3.20.0
+
+# Note: marshmallow-sqlalchemy removed after host-centric refactor (no SQLAlchemy schema auto-gen used)
+
+# Database (SQLite is built into Python, but you may want PostgreSQL or MySQL drivers)
+# Uncomment the following if you need specific database drivers:
+# psycopg2-binary>=2.9.0  # for PostgreSQL
+# PyMySQL>=1.1.0          # for MySQL
+
+# Development and testing (optional)
+# pytest>=7.4.0
+# pytest-flask>=1.2.0

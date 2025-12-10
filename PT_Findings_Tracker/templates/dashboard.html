@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Projects & Findings · Pentest Dashboard{% endblock %}
+
+{% block content %}
+  <div class="row g-4">
+    <div class="col-12 col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Recent Projects</h5>
+          <span class="badge text-bg-secondary">{{ projects|length }}</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover table-sm mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for p in projects %}
+                <tr>
+                  <td class="text-nowrap">{{ p.id }}</td>
+                  <td class="text-nowrap">{{ p.name }}</td>
+                  <td class="text-truncate" style="max-width: 260px;" title="{{ p.description }}">{{ p.description }}</td>
+                  <td class="text-nowrap"><span class="muted">{{ p.created_at.strftime('%Y-%m-%d %H:%M') if p.created_at else '' }}</span></td>
+                </tr>
+              {% else %}
+                <tr><td colspan="4" class="text-center text-muted p-3">No projects yet</td></tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Recent Findings</h5>
+          <span class="badge text-bg-secondary">{{ findings|length }}</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover table-sm mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Project</th>
+                  <th>Title</th>
+                  <th>Severity</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for f in findings %}
+                <tr>
+                  <td class="text-nowrap">{{ f.id }}</td>
+                  <td class="text-nowrap">{{ f.project.name if f.project else f.project_id }}</td>
+                  <td class="text-truncate" style="max-width: 260px;" title="{{ f.title }}">{{ f.title }}</td>
+                  <td class="text-nowrap">
+                    {% set sev = (f.severity or 'medium').lower() %}
+                    <span class="badge 
+                      {% if sev == 'critical' %} text-bg-danger 
+                      {% elif sev == 'high' %} text-bg-danger 
+                      {% elif sev == 'medium' %} text-bg-warning 
+                      {% elif sev == 'low' %} text-bg-info 
+                      {% else %} text-bg-secondary {% endif %}">
+                      {{ f.severity or 'medium' }}
+                    </span>
+                  </td>
+                  <td class="text-nowrap">{{ f.status or 'open' }}</td>
+                  <td class="text-nowrap"><span class="muted">{{ f.created_at.strftime('%Y-%m-%d %H:%M') if f.created_at else '' }}</span></td>
+                </tr>
+              {% else %}
+                <tr><td colspan="6" class="text-center text-muted p-3">No findings yet</td></tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+    <div class="row g-4 mt-1">
+      <div class="col-12 col-xxl-6">
+        <div class="card shadow-sm">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Recent Commands</h5>
+            <span class="badge text-bg-secondary">{{ commands|length }}</span>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover table-sm mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>ID</th>
+                    <th>Project</th>
+                    <th>Phase</th>
+                    <th>Command</th>
+                    <th>Created</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for c in commands %}
+                  <tr>
+                    <td class="text-nowrap">{{ c.id }}</td>
+                    <td class="text-nowrap">{{ c.project.name if c.project else c.project_id }}</td>
+                    <td class="text-nowrap">{{ c.phase }}</td>
+                    <td class="text-truncate" style="max-width: 320px;" title="{{ c.command }}">{{ c.command }}</td>
+                    <td class="text-nowrap"><span class="muted">{{ c.created_at.strftime('%Y-%m-%d %H:%M') if c.created_at else '' }}</span></td>
+                  </tr>
+                {% else %}
+                  <tr><td colspan="5" class="text-center text-muted p-3">No commands yet</td></tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-xxl-6">
+        <div class="card shadow-sm">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Recent Services</h5>
+            <span class="badge text-bg-secondary">{{ services|length }}</span>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover table-sm mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>ID</th>
+                    <th>Host</th>
+                    <th>Port</th>
+                    <th>Proto</th>
+                    <th>Name</th>
+                    <th>Product</th>
+                    <th>Seen</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for s in services %}
+                  <tr>
+                    <td class="text-nowrap">{{ s.id }}</td>
+                    <td class="text-nowrap">{{ s.target.host if s.target else s.target_id }}</td>
+                    <td class="text-nowrap">{{ s.port }}</td>
+                    <td class="text-nowrap">{{ s.protocol }}</td>
+                    <td class="text-nowrap">{{ s.name }}</td>
+                    <td class="text-truncate" style="max-width: 240px;" title="{{ (s.product ~ ' ' ~ (s.version or ''))|trim }}">{{ s.product }} {{ s.version }}</td>
+                    <td class="text-nowrap"><span class="muted">{{ s.last_seen.strftime('%Y-%m-%d %H:%M') if s.last_seen else '' }}</span></td>
+                  </tr>
+                {% else %}
+                  <tr><td colspan="7" class="text-center text-muted p-3">No services yet</td></tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Recent Vulnerabilities</h5>
+            <span class="badge text-bg-secondary">{{ vulns|length }}</span>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover table-sm mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>ID</th>
+                    <th>Project</th>
+                    <th>Title</th>
+                    <th>CVE</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for v in vulns %}
+                  <tr>
+                    <td class="text-nowrap">{{ v.id }}</td>
+                    <td class="text-nowrap">{{ v.project.name if v.project else v.project_id }}</td>
+                    <td class="text-truncate" style="max-width: 420px;" title="{{ v.title }}">{{ v.title }}</td>
+                    <td class="text-nowrap">{{ v.cve or '' }}</td>
+                    <td class="text-nowrap">
+                      {% set sev = (v.severity or 'medium').lower() %}
+                      <span class="badge 
+                        {% if sev == 'critical' %} text-bg-danger 
+                        {% elif sev == 'high' %} text-bg-danger 
+                        {% elif sev == 'medium' %} text-bg-warning 
+                        {% elif sev == 'low' %} text-bg-info 
+                        {% else %} text-bg-secondary {% endif %}">
+                        {{ v.severity or 'medium' }}
+                      </span>
+                    </td>
+                    <td class="text-nowrap">{{ v.status or 'open' }}</td>
+                    <td class="text-nowrap"><span class="muted">{{ v.created_at.strftime('%Y-%m-%d %H:%M') if v.created_at else '' }}</span></td>
+                  </tr>
+                {% else %}
+                  <tr><td colspan="7" class="text-center text-muted p-3">No vulnerabilities yet</td></tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}

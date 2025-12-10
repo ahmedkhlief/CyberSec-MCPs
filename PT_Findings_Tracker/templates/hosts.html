@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Hosts Overview{% endblock %}
+{% block content %}
+  {% set host_count = items|length %}
+  {% set total_commands = items|sum(attribute='commands') %}
+  {% set total_findings = items|sum(attribute='findings') %}
+  {% set total_services = items|sum(attribute='services') %}
+  {% set total_vulns = items|sum(attribute='vulns') %}
+
+  <section class="page-header">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+      <div>
+        <p class="text-uppercase text-white-50 mb-1">Live Asset Overview</p>
+        <h1 class="h3 mb-2">Hosts Inventory</h1>
+        <p class="mb-0 text-white-75">Track activity, open exposures, services, and automation targets for every host seen by the API.</p>
+      </div>
+      <div class="d-flex gap-2">
+        <a class="btn btn-sm btn-outline-light btn-glow" href="/commands">View Commands</a>
+        <a class="btn btn-sm btn-outline-light btn-glow" href="/findings">View Findings</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="stat-grid mb-4">
+    <div class="stat-pill">
+      <span>Hosts</span>
+      <strong>{{ host_count }}</strong>
+    </div>
+    <div class="stat-pill">
+      <span>Total Commands</span>
+      <strong>{{ total_commands }}</strong>
+    </div>
+    <div class="stat-pill">
+      <span>Documented Findings</span>
+      <strong>{{ total_findings }}</strong>
+    </div>
+    <div class="stat-pill">
+      <span>Services Discovered</span>
+      <strong>{{ total_services }}</strong>
+    </div>
+    <div class="stat-pill">
+      <span>Known Vulns</span>
+      <strong>{{ total_vulns }}</strong>
+    </div>
+  </div>
+
+  <form class="filter-card" method="get">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-8">
+        <label class="form-label text-white-50">Host contains</label>
+        <input type="text" class="form-control" name="host" placeholder="10.0.0." value="{{ host }}" />
+      </div>
+      <div class="col-md-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary flex-grow-1">Filter</button>
+        <a href="/hosts" class="btn btn-outline-light">Reset</a>
+      </div>
+    </div>
+  </form>
+
+  <div class="row g-4">
+    {% for x in items %}
+    <div class="col-12 col-md-6">
+      <div class="card host-card h-100 border-0">
+        <div class="card-header border-0 d-flex justify-content-between align-items-center">
+          <div>
+            <div class="h5 mb-0">{{ x.host }}</div>
+            <small class="text-white-50">{{ x.os or 'Unknown OS' }}</small>
+          </div>
+          {% if x.last_activity %}
+          <span class="badge text-bg-dark text-uppercase">Last seen {{ x.last_activity.strftime('%b %d, %H:%M') }}</span>
+          {% endif %}
+        </div>
+        <div class="card-body pt-0">
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <div class="stat-pill py-2 px-3">
+                <span>Commands</span>
+                <strong>{{ x.commands }}</strong>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="stat-pill py-2 px-3">
+                <span>Findings</span>
+                <strong>{{ x.findings }}</strong>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="stat-pill py-2 px-3">
+                <span>Services</span>
+                <strong>{{ x.services }}</strong>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="stat-pill py-2 px-3">
+                <span>Vulns</span>
+                <strong>{{ x.vulns }}</strong>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-sm btn-outline-light btn-glow" href="/commands?host={{ x.host }}">Commands</a>
+            <a class="btn btn-sm btn-outline-info btn-glow" href="/services?host={{ x.host }}">Services</a>
+            <a class="btn btn-sm btn-outline-danger btn-glow" href="/vulns?host={{ x.host }}">Vulnerabilities</a>
+            <a class="btn btn-sm btn-outline-warning btn-glow" href="/findings?host={{ x.host }}">Findings</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+      <div class="alert alert-info">No hosts to display. Add some data first.</div>
+    </div>
+    {% endfor %}
+  </div>
+{% endblock %}
